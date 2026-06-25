@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuth() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Utilizadores — só admin gere, qualquer autenticado lê o próprio
+    match /users/{uid} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // Produtos — leitura para todos, escrita só admin
+    match /produtos/{id} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // Vendas — qualquer autenticado pode criar e ler, só admin elimina
+    match /vendas/{id} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow delete: if isAdmin();
+      allow update: if isAuth(); // para reverter stock
+    }
+
+    // Despesas — só admin
+    match /despesas/{id} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
