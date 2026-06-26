@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth'
 import { auth } from '../firebase'
-import { useToast } from '../hooks/useToast.jsx'
+import { useToast } from '../hooks/useToast'
 
 export default function Configuracoes() {
   const { user, role } = useAuth()
