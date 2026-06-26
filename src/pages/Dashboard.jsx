@@ -27,6 +27,11 @@ export default function Dashboard() {
   const [despesas, setDespesas] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Estados para reconciliação de caixa (manual)
+  const [vendasCash, setVendasCash] = useState('')
+  const [despesasCash, setDespesasCash] = useState('')
+  const [contagemFisica, setContagemFisica] = useState('')
+
   useEffect(() => {
     async function load() {
       const [ps, vs, ds] = await Promise.all([
@@ -52,6 +57,10 @@ export default function Dashboard() {
   }, 0)
   const lucro = totalReceita - totalDespesas - custoProd
   const alertas = produtos.filter(p => p.stockActual <= p.stockMinimo)
+
+  // Cálculos da reconciliação
+  const saldoEsperado = (Number(vendasCash) || 0) - (Number(despesasCash) || 0)
+  const desfalque = saldoEsperado - (Number(contagemFisica) || 0)
 
   // vendas por dia (últimos 7 dias)
   const hoje = new Date()
@@ -191,6 +200,69 @@ export default function Dashboard() {
           }
         </div>
       </div>
+
+      {/* CARD DE RECONCILIAÇÃO DE CAIXA (apenas admin) */}
+      {isAdmin && (
+        <div className="card" style={{borderLeft: '4px solid var(--red)', marginBottom: 16}}>
+          <div className="card-header">
+            <div className="card-title">🧾 Reconciliação de Caixa</div>
+            <span style={{fontSize:12, color:'var(--muted)'}}>Preencha os valores manuais</span>
+          </div>
+          <div style={{display:'flex', flexDirection:'column', gap:12, paddingBottom:4}}>
+            <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+              <div className="field">
+                <label>💰 Vendas em Dinheiro (MT)</label>
+                <input
+                  type="number"
+                  value={vendasCash}
+                  onChange={e => setVendasCash(e.target.value)}
+                  placeholder="Ex: 5000"
+                  style={{width:'100%', padding:8, borderRadius:6, background:'var(--surface2)', border:'1px solid var(--border)'}}
+                />
+              </div>
+              <div className="field">
+                <label>💸 Despesas pagas em Dinheiro (MT)</label>
+                <input
+                  type="number"
+                  value={despesasCash}
+                  onChange={e => setDespesasCash(e.target.value)}
+                  placeholder="Ex: 300"
+                  style={{width:'100%', padding:8, borderRadius:6, background:'var(--surface2)', border:'1px solid var(--border)'}}
+                />
+              </div>
+            </div>
+            <div className="field">
+              <label>📋 Contagem Física (MT)</label>
+              <input
+                type="number"
+                value={contagemFisica}
+                onChange={e => setContagemFisica(e.target.value)}
+                placeholder="Ex: 4030"
+                style={{width:'100%', padding:8, borderRadius:6, background:'var(--surface2)', border:'1px solid var(--border)'}}
+              />
+            </div>
+            <hr style={{borderColor:'var(--border)'}} />
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <span>Saldo Esperado (Vendas - Despesas):</span>
+              <strong>{fmt(saldoEsperado)} MT</strong>
+            </div>
+            <div style={{
+              padding:12, borderRadius:8,
+              background: desfalque !== 0 ? 'rgba(239,68,68,.15)' : 'rgba(16,185,129,.15)',
+              display:'flex', justifyContent:'space-between', alignItems:'center'
+            }}>
+              <span style={{fontWeight:700}}>
+                {desfalque > 0 ? '🔴 DESFALQUE (Em falta)' :
+                 desfalque < 0 ? '🟢 SUPERÁVIT (Sobra)' :
+                 '✅ CONCILIADO'}
+              </span>
+              <span style={{fontWeight:800, fontSize:18, color: desfalque !== 0 ? 'var(--red2)' : 'var(--green2)'}}>
+                {desfalque !== 0 ? fmt(Math.abs(desfalque)) : '0.00'} MT
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Vendas recentes */}
       <div className="card">
