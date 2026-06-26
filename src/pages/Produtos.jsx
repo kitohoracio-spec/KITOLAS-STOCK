@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase'
-import { useToast } from '../hooks/useToast.jsx'
+import { useToast } from '../hooks/useToast'
 import * as XLSX from 'xlsx'
 
 const fmt = n => Number(n).toLocaleString('pt-MZ', {minimumFractionDigits:2, maximumFractionDigits:2})
