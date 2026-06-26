@@ -8,50 +8,50 @@ export default function Layout() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const isAdmin = role === 'admin'
+  const initials = user?.email?.[0]?.toUpperCase() || 'U'
 
   const navItems = [
-    { path: '/', label: '📊 Resumo', always: true },
-    { path: '/vendas', label: '🛒 Vendas', always: true },
-    { path: '/produtos', label: '📦 Produtos', adminOnly: true },
-    { path: '/despesas', label: '💸 Despesas', adminOnly: true },
-    { path: '/relatorio', label: '📈 Relatório', adminOnly: true },
-    { path: '/utilizadores', label: '👥 Utilizadores', adminOnly: true },
+    { path: '/', icon: '◈', label: 'Dashboard', always: true },
+    { path: '/vendas', icon: '🛒', label: 'Vendas', always: true },
+    { path: '/produtos', icon: '📦', label: 'Produtos', admin: true },
+    { path: '/movimentos', icon: '↕️', label: 'Movimentos', admin: true },
+    { path: '/despesas', icon: '💸', label: 'Despesas', admin: true },
+    { path: '/relatorio', icon: '📈', label: 'Relatório', admin: true },
+    { path: '/utilizadores', icon: '👥', label: 'Equipa', admin: true },
+    { path: '/configuracoes', icon: '⚙️', label: 'Config.', admin: true },
   ]
 
-  const handleLogout = async () => {
-    await signOut(auth)
-    navigate('/login')
-  }
-
   return (
-    <div className="layout">
-      <header className="top-bar">
-        <div className="top-logo">KITO<span>LAS</span></div>
-        <div className="top-user">
+    <div className="app-shell">
+      <header className="topbar">
+        <div className="topbar-logo">
+          <div className="k-badge">K</div>
+          <div className="name">KITO<span>LAS</span></div>
+        </div>
+        <div className="topbar-right">
           <span className={`badge ${isAdmin ? 'badge-admin' : 'badge-worker'}`}>
-            {isAdmin ? 'Admin' : 'Trabalhador'}
+            {isAdmin ? '⚡ Admin' : '👤 Trabalhador'}
           </span>
-          <span style={{ color: 'var(--muted)', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {user?.email}
-          </span>
-          <button className="btn btn-ghost btn-sm no-print" onClick={handleLogout}>Sair</button>
+          <div className="user-chip">
+            <div className="user-avatar">{initials}</div>
+            <span className="user-email">{user?.email}</span>
+          </div>
+          <button className="btn btn-ghost btn-sm no-print" onClick={() => { signOut(auth); navigate('/login') }}>Sair</button>
         </div>
       </header>
-      <nav className="side-nav">
-        {navItems
-          .filter(item => item.always || (item.adminOnly && isAdmin))
-          .map(item => (
-            <button
-              key={item.path}
-              className={`nav-btn ${pathname === item.path ? 'active' : ''}`}
-              onClick={() => navigate(item.path)}
-            >
-              {item.label}
-            </button>
-          ))
-        }
+
+      <nav className="sidenav">
+        {navItems.filter(i => i.always || (i.admin && isAdmin)).map(i => (
+          <button key={i.path}
+            className={`nav-item ${pathname === i.path ? 'active' : ''}`}
+            onClick={() => navigate(i.path)}>
+            <span className="nav-icon">{i.icon}</span>
+            {i.label}
+          </button>
+        ))}
       </nav>
-      <main className="page-content">
+
+      <main className="page">
         <Outlet />
       </main>
     </div>
