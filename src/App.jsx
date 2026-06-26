@@ -8,6 +8,8 @@ import Vendas from './pages/Vendas'
 import Despesas from './pages/Despesas'
 import Relatorio from './pages/Relatorio'
 import Utilizadores from './pages/Utilizadores'
+import Movimentos from './pages/Movimentos'
+import Configuracoes from './pages/Configuracoes'
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, role, loading } = useAuth()
@@ -24,11 +26,13 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
-          <Route path="produtos" element={<ProtectedRoute adminOnly><Produtos /></ProtectedRoute>} />
           <Route path="vendas" element={<ProtectedRoute><Vendas /></ProtectedRoute>} />
+          <Route path="produtos" element={<ProtectedRoute adminOnly><Produtos /></ProtectedRoute>} />
+          <Route path="movimentos" element={<ProtectedRoute adminOnly><Movimentos /></ProtectedRoute>} />
           <Route path="despesas" element={<ProtectedRoute adminOnly><Despesas /></ProtectedRoute>} />
           <Route path="relatorio" element={<ProtectedRoute adminOnly><Relatorio /></ProtectedRoute>} />
           <Route path="utilizadores" element={<ProtectedRoute adminOnly><Utilizadores /></ProtectedRoute>} />
+          <Route path="configuracoes" element={<ProtectedRoute adminOnly><Configuracoes /></ProtectedRoute>} />
         </Route>
       </Routes>
     </BrowserRouter>
