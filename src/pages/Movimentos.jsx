@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { collection, getDocs, addDoc, query, orderBy } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useAuth } from '../hooks/useAuth.jsx'
-import { useToast } from '../hooks/useToast.jsx'
+import { useToast } from '../hooks/useToast'
 
 const fmt = n => Number(n).toLocaleString('pt-MZ',{minimumFractionDigits:2,maximumFractionDigits:2})
 const today = () => new Date().toISOString().slice(0,10)
