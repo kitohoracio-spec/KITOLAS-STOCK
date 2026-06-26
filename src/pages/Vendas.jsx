@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, orderBy, query } from 'firebase/firestore'
 import { db } from '../firebase'
-import { useAuth } from '../hooks/useAuth.jsx'
+import { useAuth } from '../hooks/useAuth'
 import { useToast } from '../hooks/useToast'
 import * as XLSX from 'xlsx'
 
